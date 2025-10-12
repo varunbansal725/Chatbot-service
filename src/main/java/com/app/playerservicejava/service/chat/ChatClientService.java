@@ -30,6 +30,7 @@ public class ChatClientService {
 
     public String chat() throws OllamaBaseException, IOException, InterruptedException {
         String model = OllamaModelType.TINYLLAMA;
+        // "{{user_query}} you can use this player_dat as context {{xontext}}";
 
         // https://ollama4j.github.io/ollama4j/intro
         PromptBuilder promptBuilder =
