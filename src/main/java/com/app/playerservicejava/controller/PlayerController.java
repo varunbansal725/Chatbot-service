@@ -1,5 +1,6 @@
 package com.app.playerservicejava.controller;
 
+import com.app.playerservicejava.exception.PlayerNotFoundException;
 import com.app.playerservicejava.model.Player;
 import com.app.playerservicejava.model.Players;
 import com.app.playerservicejava.service.PlayerService;
@@ -35,8 +36,12 @@ public class PlayerController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<Player>> searchPlayers(
-            @RequestParam(required = false) @Size(min = 1, max = 50) String lastName,
-            @RequestParam(required = false) @Pattern(regexp = "\\d{4}") String birthYear,
+            @RequestParam(required = false) 
+            @Size(min = 1, max = 50, message = "Last name must be between 1 and 50 characters") 
+            String lastName,
+            @RequestParam(required = false) 
+            @Pattern(regexp = "\\d{4}", message = "Birth year must be a 4-digit number") 
+            String birthYear,
             Pageable pageable) {
         Page<Player> page;
         if (lastName != null) {
@@ -69,16 +74,19 @@ public class PlayerController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Player> replacePlayer(@PathVariable("id") @NotBlank @Size(min = 3, max = 32) String id,
                                                 @RequestBody @Valid Player replacement) {
-        Optional<Player> updated = playerService.replacePlayer(id, replacement);
-        return updated.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            Player updated = playerService.replacePlayer(id, replacement);
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        } catch (PlayerNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Player> patchPlayer(@PathVariable("id") @NotBlank @Size(min = 3, max = 32) String id,
                                               @RequestBody Player patch) {
-        Optional<Player> updated = playerService.patchPlayer(id, patch);
-        return updated.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+        return playerService.patchPlayer(id, patch)
+                .map(updated -> new ResponseEntity<>(updated, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

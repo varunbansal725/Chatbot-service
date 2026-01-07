@@ -1,5 +1,6 @@
 package com.app.playerservicejava.service;
 
+import com.app.playerservicejava.exception.PlayerNotFoundException;
 import com.app.playerservicejava.model.Player;
 import com.app.playerservicejava.model.Players;
 import com.app.playerservicejava.repository.PlayerRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -56,12 +58,12 @@ public class PlayerService {
         return playerRepository.save(player);
     }
 
-    public Optional<Player> replacePlayer(String id, Player replacement) {
+    public Player replacePlayer(String id, Player replacement) {
         return playerRepository.findById(id).map(existing -> {
             // replace all fields; set id to path id
             replacement.setPlayerId(id);
             return playerRepository.save(replacement);
-        });
+        }).orElseThrow(() -> new PlayerNotFoundException("Player not found with id: " + id));
     }
 
     public Optional<Player> patchPlayer(String id, Player patch) {

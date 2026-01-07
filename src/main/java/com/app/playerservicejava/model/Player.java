@@ -1,6 +1,7 @@
 package com.app.playerservicejava.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="PLAYERS")
@@ -20,13 +21,15 @@ public class Player {
     @Column(name = "BIRTHDAY")
     private String birthDay;
 
-    @Column(name = "BIRTHCOUNTRY")
+    @NotBlank(message = "Birth country is required")
+    @Column(name = "BIRTHCOUNTRY", nullable = false)
     private String birthCountry;
 
     @Column(name = "BIRTHSTATE")
     private String birthState;
 
-    @Column(name = "BIRTHCITY")
+    @NotBlank(message = "Birth city is required")
+    @Column(name = "BIRTHCITY", nullable = false)
     private String birthCity;
 
     @Column(name = "DEATHYEAR")
@@ -47,10 +50,12 @@ public class Player {
     @Column(name = "DEATHCITY")
     private String deathCity;
 
-    @Column(name = "NAMEFIRST")
+    @NotBlank(message = "First name is required")
+    @Column(name = "NAMEFIRST", nullable = false)
     private String firstName;
 
-    @Column(name = "NAMELAST")
+    @NotBlank(message = "Last name is required")
+    @Column(name = "NAMELAST", nullable = false)
     private String lastName;
 
     @Column(name = "NAMEGIVEN")
